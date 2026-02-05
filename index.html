@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection Schedule</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Arial,sans-serif;background:#f5f5f5;padding:15px}
+        .container{max-width:1000px;margin:0 auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+        h1{text-align:center;color:#1a1a2e;margin-bottom:5px;font-size:24px}
+        .subtitle{text-align:center;color:#666;margin-bottom:15px;font-size:14px}
+
+        /* STATUS BAR */
+        .status-bar{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:8px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:6px}
+        .status-bar .status-left{color:#2e7d32;font-weight:bold}
+        .status-bar .status-right{color:#666;font-size:11px}
+
+        /* PERIOD BAR */
+        .period-bar{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+        .period-bar label{font-weight:bold;color:#1a1a2e;font-size:13px}
+        .period-bar select{padding:8px 12px;border:2px solid #0f3460;border-radius:6px;font-size:13px;font-weight:bold;color:#0f3460;background:#f0f4ff;min-width:260px;cursor:pointer}
+        .pbtn{padding:7px 14px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold}
+        .pbtn-new{background:#28a745;color:#fff}
+        .pbtn-del{background:#dc3545;color:#fff}
+
+        /* TOOLBAR */
+        .toolbar{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+        .toolbar button{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:bold;color:#fff}
+        .tb-settings{background:#6c757d}
+        .tb-print{background:#17a2b8}
+        .tb-save{background:#28a745}
+        .tb-load{background:#0d6efd}
+
+        /* WEEK INFO */
+        .week-info{display:flex;gap:15px;justify-content:center;margin-bottom:15px;flex-wrap:wrap}
+        .week-info label{font-weight:bold;color:#1a1a2e;font-size:13px}
+        .week-info input,.week-info select{padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:13px}
+
+        /* TOTALS */
+        .week-total{background:#0f3460;color:#fff;padding:12px 20px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px}
+        .week-total span:last-child{font-size:18px;font-weight:bold}
+        .confidence-summary{display:flex;gap:8px;margin-bottom:12px}
+        .conf-item{flex:1;padding:8px 12px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;font-weight:bold}
+        .conf-item.high{background:#d4edda;color:#155724;border:2px solid #155724}
+        .conf-item.med{background:#fff3cd;color:#856404;border:2px solid #856404}
+        .conf-item.low{background:#f8d7da;color:#721c24;border:2px solid #721c24}
+        .conf-item span:last-child{font-size:15px}
+
+        /* SETTINGS */
+        .settings-panel{display:none;background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:18px;margin-bottom:15px}
+        .settings-panel.active{display:block}
+        .settings-panel h3{margin-bottom:12px;color:#1a1a2e;font-size:15px}
+        .settings-section{display:flex;gap:20px;flex-wrap:wrap}
+        .settings-group{flex:1;min-width:220px;background:#fff;padding:12px;border-radius:5px;border:1px solid #ddd}
+        .settings-group h4{margin-bottom:8px;color:#16213e;font-size:13px}
+        .settings-group ul{list-style:none;margin-bottom:8px;max-height:130px;overflow-y:auto}
+        .settings-group li{display:flex;justify-content:space-between;align-items:center;padding:4px 6px;background:#f5f5f5;margin-bottom:4px;border-radius:3px;font-size:12px}
+        .settings-group li button{background:#dc3545;color:#fff;border:none;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:10px}
+        .settings-group .add-option{display:flex;gap:4px}
+        .settings-group .add-option input{flex:1;padding:5px;border:1px solid #ccc;border-radius:3px;font-size:12px}
+        .settings-group .add-option button{background:#28a745;color:#fff;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:12px}
+
+        /* DAYS */
+        .day-section{margin-bottom:15px;border:1px solid #ddd;border-radius:8px;overflow:hidden}
+        .day-header{background:#16213e;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+        .day-header input[type="text"]{background:0 0;border:1px dashed rgba(255,255,255,.5);color:#fff;padding:4px 8px;font-size:13px;font-weight:bold;border-radius:3px;width:260px}
+        .day-header input[type="text"]::placeholder{color:rgba(255,255,255,.6)}
+        .day-total{font-weight:bold;font-size:13px}
+        .collection-table{width:100%;border-collapse:collapse}
+        .collection-table th{background:#e8e8e8;color:#1a1a2e;padding:8px;text-align:center;font-size:10px;font-weight:bold}
+        .collection-table td{padding:4px 5px;border-bottom:1px solid #eee;text-align:center}
+        .collection-table td:first-child{text-align:left}
+        .collection-table input[type="text"],.collection-table input[type="number"],.collection-table select{width:100%;padding:4px;border:1px solid #ddd;border-radius:3px;font-size:11px}
+        .collection-table input[type="number"]{text-align:right}
+        .collection-table select{background:#fff}
+        .collection-table .time-input{width:55px;text-align:center;background:#f9f9f9}
+        .collection-table .confidence-select{text-align:center;font-weight:bold}
+        .collection-table .checkbox-cell{background:#f9f9f9;width:40px}
+        .print-check{display:none;font-weight:bold;font-size:16px}
+        .collection-table input[type="checkbox"]{width:15px;height:15px;cursor:pointer}
+        .delete-btn{background:#dc3545;color:#fff;border:none;padding:3px 6px;border-radius:3px;cursor:pointer;font-size:10px}
+        .move-btn{background:#007bff;color:#fff;border:none;padding:3px 6px;border-radius:3px;cursor:pointer;font-size:10px}
+        .action-cell{display:flex;gap:3px;justify-content:center}
+        .add-row-btn{background:#28a745;color:#fff;border:none;padding:6px 12px;border-radius:3px;cursor:pointer;font-size:12px;margin:8px}
+        .add-day-btn{background:#0f3460;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-size:13px;display:block;margin:15px auto}
+
+        /* MODAL */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center}
+        .modal-overlay.active{display:flex}
+        .modal{background:#fff;padding:22px;border-radius:10px;min-width:320px;max-width:90%}
+        .modal h3{margin-bottom:12px;color:#1a1a2e}
+        .modal p{margin-bottom:12px;color:#666;font-size:14px}
+        .modal select{width:100%;padding:10px;font-size:14px;border:1px solid #ccc;border-radius:5px;margin-bottom:15px}
+        .modal-buttons{display:flex;gap:8px;justify-content:flex-end}
+        .modal-buttons button{padding:8px 18px;border:none;border-radius:5px;cursor:pointer;font-size:13px}
+        .modal-cancel{background:#6c757d;color:#fff}
+        .modal-confirm{background:#007bff;color:#fff}
+
+        /* TOAST */
+        .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:9999;transition:transform .3s ease;white-space:nowrap}
+        .toast.show{transform:translateX(-50%) translateY(0)}
+        .toast.success{background:#28a745}
+        .toast.error{background:#dc3545}
+        .toast.info{background:#17a2b8}
+
+        /* PRINT */
+        @media print{
+            @page{size:letter;margin:.3in}
+            body{background:#fff;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+            .container{box-shadow:none;padding:10px;max-width:100%;transform:scale(.9);transform-origin:top center}
+            .no-print{display:none!important}
+            h1{font-size:24px;color:#000!important;margin-bottom:3px}
+            .subtitle{color:#000!important;font-size:14px;margin-bottom:10px}
+            .week-total{background:#000!important;color:#fff!important;padding:10px 15px;margin-bottom:8px}
+            .collected-total{background:#444!important}
+            .conf-item{padding:6px 8px;font-size:13px;color:#000!important}
+            .conf-item.high{background:#d4edda!important;border:2px solid #000!important}
+            .conf-item.med{background:#fff3cd!important;border:2px solid #000!important}
+            .conf-item.low{background:#f8d7da!important;border:2px solid #000!important}
+            .day-section{margin-bottom:8px;page-break-inside:avoid;border:2px solid #000!important}
+            .day-header{background:#000!important;color:#fff!important;padding:6px 10px}
+            .day-header input[type="text"]{border:none;background:0 0;color:#fff!important;font-size:14px}
+            .collection-table{border:2px solid #000!important}
+            .collection-table th{background:#ddd!important;color:#000!important;font-size:11px;padding:5px;border:1px solid #000!important}
+            .collection-table td{padding:4px 5px;font-size:12px;color:#000!important;border:1px solid #000!important}
+            .collection-table input,.collection-table select:not(.confidence-select){border:none!important;background:0 0!important;-webkit-appearance:none;appearance:none;font-size:12px;color:#000!important}
+            .collection-table .confidence-select{border:none!important;-webkit-appearance:none;appearance:none;font-size:12px;font-weight:bold!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+            .collection-table .time-input{background:#f0f0f0!important}
+            .collection-table .checkbox-cell{background:#f0f0f0!important}
+            .collection-table .checkbox-cell input[type="checkbox"]{display:none!important}
+            .print-check{display:inline!important;font-size:16px;color:#000!important}
+            .delete-btn,.move-btn{display:none}
+            .modal-overlay,.settings-panel,.add-row-btn,.add-day-btn,.status-bar,.period-bar,.toolbar,.toast{display:none!important}
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>COLLECTION SCHEDULE</h1>
+
+    <div class="status-bar no-print" id="statusBar">
+        <span class="status-left" id="statusText">💾 Auto-saved to this browser</span>
+        <span class="status-right" id="periodCount"></span>
+    </div>
+
+    <div class="period-bar no-print">
+        <label>📅 Period:</label>
+        <select id="periodSelect" onchange="switchPeriod()"></select>
+        <button class="pbtn pbtn-new" onclick="createNewPeriod()">+ New Period</button>
+        <button class="pbtn pbtn-del" onclick="deleteCurrentPeriod()">🗑️</button>
+    </div>
+
+    <div class="toolbar no-print">
+        <button class="tb-settings" onclick="toggleSettings()">⚙️ Settings</button>
+        <button class="tb-save" onclick="saveFile()">💾 Save Data</button>
+        <button class="tb-load" onclick="loadFile()">📂 Load Data</button>
+        <button class="tb-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+
+    <div class="settings-panel no-print" id="settingsPanel">
+        <h3>⚙️ Manage Dropdown Options</h3>
+        <div class="settings-section">
+            <div class="settings-group">
+                <h4>Project Managers</h4>
+                <ul id="pmList"></ul>
+                <div class="add-option"><input type="text" id="newPmInput" placeholder="Enter name..."><button onclick="addPmOption()">Add</button></div>
+            </div>
+            <div class="settings-group">
+                <h4>Finance Sources</h4>
+                <ul id="financeList"></ul>
+                <div class="add-option"><input type="text" id="newFinanceInput" placeholder="Enter source..."><button onclick="addFinanceOption()">Add</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="week-info no-print">
+        <div><label>Period: </label><input type="date" id="periodStart" style="width:125px" onchange="onDataChange()"> <span>to</span> <input type="date" id="periodEnd" style="width:125px" onchange="onDataChange()"></div>
+        <div><label>Year: </label><input type="text" id="year" value="2026" style="width:70px" oninput="onDataChange()"></div>
+        <div><label>PM: </label><select id="projectManager" style="width:170px" onchange="onDataChange()"><option value="">-- Select --</option></select></div>
+    </div>
+    <p class="subtitle" id="subtitleDisplay"></p>
+
+    <div class="week-total"><span>WEEK TOTAL TO COLLECT</span><span id="grandTotal">$0.00</span></div>
+    <div class="confidence-summary">
+        <div class="conf-item high"><span>HIGH</span><span id="highTotal">$0.00</span></div>
+        <div class="conf-item med"><span>MED</span><span id="medTotal">$0.00</span></div>
+        <div class="conf-item low"><span>LOW</span><span id="lowTotal">$0.00</span></div>
+    </div>
+    <div class="week-total collected-total" style="background:#28a745"><span>TOTAL COLLECTED</span><span id="totalCollected">$0.00</span></div>
+
+    <div id="daysContainer"></div>
+    <button class="add-day-btn no-print" onclick="addDay()">+ Add Day</button>
+</div>
+
+<div class="modal-overlay" id="moveModal">
+    <div class="modal">
+        <h3>📅 Move Customer</h3>
+        <p id="moveCustomerName"></p>
+        <select id="moveDaySelect"></select>
+        <div class="modal-buttons"><button class="modal-cancel" onclick="closeMoveModal()">Cancel</button><button class="modal-confirm" onclick="confirmMove()">Move</button></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'altaCal_scheduleData';
+let appData = null;
+let dayCounter = 0, saveTimer = null;
+let currentMoveRow = null, currentMoveFromDay = null;
+let pmOptions = [], financeOptions = [];
+
+function showToast(m,t,ms){t=t||'info';ms=ms||3000;const e=document.getElementById('toast');e.textContent=m;e.className='toast '+t+' show';setTimeout(()=>e.className='toast',ms);}
+
+// === LOCAL STORAGE ===
+function saveToLocal(){
+    try{
+        localStorage.setItem(STORE_KEY,JSON.stringify(appData));
+        document.getElementById('statusText').textContent='💾 Saved — '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    }catch(e){}
+}
+function loadFromLocal(){try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveCurrentPeriodToData();saveToLocal();},800);}
+
+// === FILE SAVE / LOAD ===
+function saveFile(){
+    saveCurrentPeriodToData();
+    const json=JSON.stringify(appData,null,2);
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='collection_schedules_all_periods.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('💾 File saved! Keep it in Google Drive or email it to yourself.','success',4000);
+}
+
+function loadFile(){
+    const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+    inp.onchange=e=>{
+        const f=e.target.files[0];if(!f)return;
+        const r=new FileReader();
+        r.onload=ev=>{
+            try{
+                const data=JSON.parse(ev.target.result);
+                if(!data.periods||!Array.isArray(data.periods))throw new Error('bad format');
+                appData=data;
+                pmOptions=appData.pmOptions||defaultPm();
+                financeOptions=appData.financeOptions||defaultFin();
+                renderPmList();renderFinanceList();updatePmDropdowns();updateFinanceDropdowns();
+                if(!appData.activePeriodId&&appData.periods.length)appData.activePeriodId=appData.periods[0].id;
+                renderPeriodSelect();loadActivePeriodToUI();saveToLocal();
+                showToast('✅ Loaded! '+appData.periods.length+' period(s)','success',4000);
+            }catch(err){showToast('❌ Invalid file','error');}
+        };
+        r.readAsText(f);
+    };
+    inp.click();
+}
+
+// === PERIODS ===
+function defaultPm(){return["Abraham Medina","Rudy Soto","Nick/Ed","Kyle W."];}
+function defaultFin(){return["CASH","HOMERUN","SYNCHRONY","CHECK","LENDKEY","AQUA","FOUNDATION"];}
+
+function newAppData(){return{pmOptions:defaultPm(),financeOptions:defaultFin(),periods:[],activePeriodId:null};}
+
+function createBlankPeriod(){
+    const now=new Date(),mon=getMonday(now),fri=new Date(mon);fri.setDate(fri.getDate()+4);
+    return{id:'p_'+Date.now()+'_'+Math.random().toString(36).substr(2,4),periodStart:isoDate(mon),periodEnd:isoDate(fri),year:String(now.getFullYear()),projectManager:'',
+    days:[{dayName:"MONDAY, ",collections:[]},{dayName:"TUESDAY, ",collections:[]},{dayName:"WEDNESDAY, ",collections:[]},{dayName:"THURSDAY, ",collections:[]},{dayName:"FRIDAY, ",collections:[]}]};
+}
+function getMonday(d){const dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()-day+(day===0?-6:1));return dt;}
+function isoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtShort(s){if(!s)return'';const d=new Date(s+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}
+
+function periodLabel(p){
+    let l='';if(p.periodStart&&p.periodEnd)l=fmtShort(p.periodStart)+' – '+fmtShort(p.periodEnd);
+    else if(p.periodStart)l=fmtShort(p.periodStart);else l='No Date';
+    if(p.year)l+=', '+p.year;if(p.projectManager)l+=' — '+p.projectManager;return l;
+}
+function renderPeriodSelect(){
+    const sel=document.getElementById('periodSelect');sel.innerHTML='';
+    [...appData.periods].sort((a,b)=>(b.periodStart||'').localeCompare(a.periodStart||'')).forEach(p=>{
+        const o=document.createElement('option');o.value=p.id;o.textContent=periodLabel(p);
+        if(p.id===appData.activePeriodId)o.selected=true;sel.appendChild(o);
+    });
+    document.getElementById('periodCount').textContent=appData.periods.length+' period(s) stored';
+}
+function switchPeriod(){saveCurrentPeriodToData();appData.activePeriodId=document.getElementById('periodSelect').value;loadActivePeriodToUI();saveToLocal();}
+function createNewPeriod(){saveCurrentPeriodToData();const p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;renderPeriodSelect();loadActivePeriodToUI();saveToLocal();showToast('New period created','success');}
+function deleteCurrentPeriod(){
+    if(appData.periods.length<=1){showToast('Cannot delete the only period','error');return;}
+    if(!confirm('Delete this period?'))return;
+    const i=appData.periods.findIndex(p=>p.id===appData.activePeriodId);appData.periods.splice(i,1);
+    appData.activePeriodId=appData.periods[0].id;renderPeriodSelect();loadActivePeriodToUI();saveToLocal();showToast('Period deleted','info');
+}
+function getActivePeriod(){return appData.periods.find(p=>p.id===appData.activePeriodId)||appData.periods[0];}
+
+function saveCurrentPeriodToData(){
+    const p=getActivePeriod();if(!p)return;
+    p.periodStart=document.getElementById('periodStart').value;p.periodEnd=document.getElementById('periodEnd').value;
+    p.year=document.getElementById('year').value;p.projectManager=document.getElementById('projectManager').value;p.days=[];
+    document.querySelectorAll('.day-section').forEach(sec=>{
+        const dn=sec.querySelector('.day-name-input').value,cols=[];
+        sec.querySelectorAll('tbody tr').forEach(row=>{
+            const i=row.querySelectorAll('input'),s=row.querySelectorAll('select');
+            cols.push({customer:i[0].value,amount:parseFloat(i[1].value)||0,pm:s[0].value,finance:s[1].value,confidence:s[2].value,time:i[2].value,collected:i[3].checked});
+        });
+        p.days.push({dayName:dn,collections:cols});
+    });
+    appData.pmOptions=pmOptions;appData.financeOptions=financeOptions;
+}
+function loadActivePeriodToUI(){
+    const p=getActivePeriod();if(!p)return;
+    document.getElementById('daysContainer').innerHTML='';dayCounter=0;
+    document.getElementById('periodStart').value=p.periodStart||'';document.getElementById('periodEnd').value=p.periodEnd||'';
+    document.getElementById('year').value=p.year||'2026';updatePmDropdowns();document.getElementById('projectManager').value=p.projectManager||'';
+    updateSubtitle();
+    if(p.days&&p.days.length>0)p.days.forEach(d=>addDay(d.dayName,d.collections));else addDay('MONDAY, ');
+    calculateTotals();
+}
+
+function onDataChange(){updateSubtitle();calculateTotals();saveCurrentPeriodToData();renderPeriodSelect();scheduleSave();}
+
+// === DROPDOWNS ===
+function renderPmList(){const l=document.getElementById('pmList');l.innerHTML='';pmOptions.forEach((p,i)=>{const li=document.createElement('li');li.innerHTML='<span>'+p+'</span><button onclick="removePmOption('+i+')">✕</button>';l.appendChild(li);});}
+function addPmOption(){const inp=document.getElementById('newPmInput'),v=inp.value.trim();if(v&&!pmOptions.includes(v)){pmOptions.push(v);renderPmList();updatePmDropdowns();inp.value='';onDataChange();}}
+function removePmOption(i){pmOptions.splice(i,1);renderPmList();updatePmDropdowns();onDataChange();}
+function updatePmDropdowns(){
+    const h=document.getElementById('projectManager'),hv=h.value;h.innerHTML='<option value="">-- Select --</option>';
+    pmOptions.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;h.appendChild(o);});h.value=hv;
+    document.querySelectorAll('.pm-select').forEach(s=>{const v=s.value;s.innerHTML='<option value="">--</option>';pmOptions.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;s.appendChild(o);});s.value=v;});
+}
+function renderFinanceList(){const l=document.getElementById('financeList');l.innerHTML='';financeOptions.forEach((f,i)=>{const li=document.createElement('li');li.innerHTML='<span>'+f+'</span><button onclick="removeFinanceOption('+i+')">✕</button>';l.appendChild(li);});}
+function addFinanceOption(){const inp=document.getElementById('newFinanceInput'),v=inp.value.trim().toUpperCase();if(v&&!financeOptions.includes(v)){financeOptions.push(v);renderFinanceList();updateFinanceDropdowns();inp.value='';onDataChange();}}
+function removeFinanceOption(i){financeOptions.splice(i,1);renderFinanceList();updateFinanceDropdowns();onDataChange();}
+function updateFinanceDropdowns(){document.querySelectorAll('.finance-select').forEach(s=>{const v=s.value;s.innerHTML='<option value="">--</option>';financeOptions.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;s.appendChild(o);});s.value=v;});}
+
+function updateSubtitle(){
+    const s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value,y=document.getElementById('year').value,pm=document.getElementById('projectManager').value;
+    let parts=[];if(s&&e)parts.push('Period '+fmtShort(s)+' - '+fmtShort(e));else if(s)parts.push('Period '+fmtShort(s));
+    if(y)parts.push(y);let txt=parts.join(', ');if(pm)txt+=(txt?' - ':'')+pm;document.getElementById('subtitleDisplay').textContent=txt;
+}
+function getPeriodString(){const s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value;if(s&&e)return fmtShort(s)+'-'+fmtShort(e);if(s)return fmtShort(s);return'';}
+function toggleSettings(){document.getElementById('settingsPanel').classList.toggle('active');}
+
+// === DAYS & ROWS ===
+function addDay(dayName,collections){
+    dayCounter++;const id=dayCounter,c=document.getElementById('daysContainer'),sec=document.createElement('div');
+    sec.className='day-section';sec.id='day-'+id;sec.dataset.dayId=id;
+    sec.innerHTML='<div class="day-header"><input type="text" class="day-name-input" value="'+(dayName||'DAY, MONTH DATE, YEAR')+'" placeholder="e.g., MONDAY, JANUARY 19, 2026" onchange="onDataChange()"><div style="display:flex;align-items:center;gap:12px"><span class="day-total">Day Total: $0.00</span><button class="delete-btn no-print" onclick="deleteDay('+id+')">Delete Day</button></div></div><table class="collection-table"><thead><tr><th style="width:16%">CUSTOMER</th><th style="width:9%">AMOUNT</th><th style="width:12%">PROJECT MGR</th><th style="width:10%">FINANCE</th><th style="width:8%">CONFIDENCE</th><th style="width:7%">TIME</th><th style="width:5%">✓</th><th style="width:11%" class="no-print">ACTIONS</th></tr></thead><tbody id="tbody-'+id+'"></tbody></table><button class="add-row-btn no-print" onclick="addRow('+id+')">+ Add Customer</button>';
+    c.appendChild(sec);
+    if(collections&&collections.length>0)collections.forEach(d=>addRow(id,d));else addRow(id);
+    calculateTotals();
+}
+function addRow(dayId,data){
+    data=data||{};const tb=document.getElementById('tbody-'+dayId),row=document.createElement('tr');row.dataset.dayId=dayId;
+    let pmH='<option value="">--</option>';pmOptions.forEach(p=>{pmH+='<option value="'+p+'" '+(data.pm===p?'selected':'')+'>'+p+'</option>';});
+    let fH='<option value="">--</option>';financeOptions.forEach(f=>{fH+='<option value="'+f+'" '+(data.finance===f?'selected':'')+'>'+f+'</option>';});
+    let cH='<option value="">--</option>';['HIGH','MED','LOW'].forEach(l=>{cH+='<option value="'+l+'" '+(data.confidence===l?'selected':'')+'>'+l+'</option>';});
+    row.innerHTML='<td><input type="text" value="'+(data.customer||'')+'" placeholder="Customer Name" onchange="onDataChange()"></td><td><input type="number" value="'+(data.amount||'')+'" placeholder="0" onchange="onDataChange()"></td><td><select class="pm-select" onchange="onDataChange()">'+pmH+'</select></td><td><select class="finance-select" onchange="onDataChange()">'+fH+'</select></td><td><select class="confidence-select" onchange="updateConfidenceColor(this);onDataChange()">'+cH+'</select></td><td><input type="text" class="time-input" value="'+(data.time||'')+'" placeholder="" onchange="onDataChange()"></td><td class="checkbox-cell"><input type="checkbox" '+(data.collected?'checked':'')+' onchange="updateCheckmark(this);onDataChange()"><span class="print-check">'+(data.collected?'✓':'')+'</span></td><td class="no-print"><div class="action-cell"><button class="move-btn" onclick="openMoveModal(this)">📅</button><button class="delete-btn" onclick="deleteRow(this)">✕</button></div></td>';
+    const cs=row.querySelector('.confidence-select');if(cs&&data.confidence)updateConfidenceColor(cs);
+    tb.appendChild(row);calculateTotals();
+}
+function deleteRow(btn){btn.closest('tr').remove();onDataChange();}
+function deleteDay(id){if(confirm('Delete this day?')){document.getElementById('day-'+id).remove();onDataChange();}}
+
+// === MOVE MODAL ===
+function openMoveModal(btn){
+    const row=btn.closest('tr');currentMoveRow=row;currentMoveFromDay=row.dataset.dayId;
+    document.getElementById('moveCustomerName').textContent='Move "'+(row.querySelector('input[type="text"]').value||'Customer')+'" to:';
+    const sel=document.getElementById('moveDaySelect');sel.innerHTML='';
+    document.querySelectorAll('.day-section').forEach(s=>{const did=s.dataset.dayId,o=document.createElement('option');o.value=did;o.textContent=s.querySelector('.day-name-input').value;if(did===currentMoveFromDay){o.textContent+=' (current)';o.disabled=true;}sel.appendChild(o);});
+    const no=document.createElement('option');no.value='new';no.textContent='➕ Create New Day...';sel.appendChild(no);
+    document.getElementById('moveModal').classList.add('active');
+}
+function closeMoveModal(){document.getElementById('moveModal').classList.remove('active');currentMoveRow=null;currentMoveFromDay=null;}
+function confirmMove(){
+    const tgt=document.getElementById('moveDaySelect').value;if(!currentMoveRow){closeMoveModal();return;}
+    const i=currentMoveRow.querySelectorAll('input'),s=currentMoveRow.querySelectorAll('select');
+    const rd={customer:i[0].value,amount:parseFloat(i[1].value)||0,pm:s[0].value,finance:s[1].value,confidence:s[2].value,time:i[2].value,collected:i[3].checked};
+    currentMoveRow.remove();
+    if(tgt==='new'){const n=prompt('Enter the new day name:');if(n)addDay(n,[rd]);else addRow(currentMoveFromDay,rd);}else addRow(tgt,rd);
+    onDataChange();closeMoveModal();
+}
+
+// === TOTALS ===
+function calculateTotals(){
+    let grand=0,collected=0,high=0,med=0,low=0;
+    document.querySelectorAll('.day-section').forEach(sec=>{
+        let dt=0;sec.querySelectorAll('tbody tr').forEach(row=>{
+            const a=parseFloat(row.querySelector('input[type="number"]')?.value)||0;
+            const chk=row.querySelector('input[type="checkbox"]')?.checked;
+            const cf=row.querySelector('.confidence-select')?.value;
+            dt+=a;if(chk)collected+=a;if(cf==='HIGH')high+=a;else if(cf==='MED')med+=a;else if(cf==='LOW')low+=a;
+        });sec.querySelector('.day-total').textContent='Day Total: $'+dt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});grand+=dt;
+    });
+    const f=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    document.getElementById('grandTotal').textContent=f(grand);document.getElementById('totalCollected').textContent=f(collected);
+    document.getElementById('highTotal').textContent=f(high);document.getElementById('medTotal').textContent=f(med);document.getElementById('lowTotal').textContent=f(low);
+}
+function updateCheckmark(cb){cb.parentElement.querySelector('.print-check').textContent=cb.checked?'✓':'';}
+function updateConfidenceColor(sel){
+    const v=sel.value;sel.style.fontWeight='bold';
+    if(v==='HIGH'){sel.style.backgroundColor='#d4edda';sel.style.color='#155724';}
+    else if(v==='MED'){sel.style.backgroundColor='#fff3cd';sel.style.color='#856404';}
+    else if(v==='LOW'){sel.style.backgroundColor='#f8d7da';sel.style.color='#721c24';}
+    else{sel.style.backgroundColor='';sel.style.color='';sel.style.fontWeight='normal';}
+}
+
+// === INIT ===
+function init(){
+    const saved=loadFromLocal();
+    if(saved&&saved.periods&&saved.periods.length>0){appData=saved;}
+    else{appData=newAppData();const p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;}
+    pmOptions=appData.pmOptions||defaultPm();financeOptions=appData.financeOptions||defaultFin();
+    renderPmList();renderFinanceList();updatePmDropdowns();updateFinanceDropdowns();
+    if(!appData.activePeriodId&&appData.periods.length)appData.activePeriodId=appData.periods[0].id;
+    renderPeriodSelect();loadActivePeriodToUI();saveToLocal();
+}
+
+document.addEventListener('keypress',function(e){if(e.key==='Enter'){if(e.target.id==='newPmInput')addPmOption();else if(e.target.id==='newFinanceInput')addFinanceOption();}});
+window.onload=init;
+</script>
+</body>
+</html>
