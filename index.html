@@ -1,52 +1,32 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collection Schedule</title>
-    <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection Schedule</title>
+<style id="mainStyle">
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:Arial,sans-serif;background:#f5f5f5;padding:15px}
         .container{max-width:1000px;margin:0 auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
         h1{text-align:center;color:#1a1a2e;margin-bottom:5px;font-size:24px}
         .subtitle{text-align:center;color:#666;margin-bottom:15px;font-size:14px}
-
-        /* STATUS BAR */
         .status-bar{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:8px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;flex-wrap:wrap;gap:6px}
         .status-bar .status-left{color:#2e7d32;font-weight:bold}
         .status-bar .status-right{color:#666;font-size:11px}
-
-        /* PERIOD BAR */
         .period-bar{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
         .period-bar label{font-weight:bold;color:#1a1a2e;font-size:13px}
         .period-bar select{padding:8px 12px;border:2px solid #0f3460;border-radius:6px;font-size:13px;font-weight:bold;color:#0f3460;background:#f0f4ff;min-width:260px;cursor:pointer}
         .pbtn{padding:7px 14px;border:none;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold}
         .pbtn-new{background:#28a745;color:#fff}
         .pbtn-del{background:#dc3545;color:#fff}
-
-        /* TOOLBAR */
         .toolbar{display:flex;gap:8px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
         .toolbar button{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:bold;color:#fff}
         .tb-settings{background:#6c757d}
         .tb-print{background:#17a2b8}
         .tb-save{background:#28a745}
-        .tb-photo{background:#ff6f00}
-
-        /* PROCESSING OVERLAY */
-        .processing-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9998;justify-content:center;align-items:center;flex-direction:column;gap:15px;color:#fff}
-        .processing-overlay.active{display:flex}
-        .processing-overlay .proc-spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top:4px solid #fff;border-radius:50%;animation:procspin 1s linear infinite}
-        @keyframes procspin{to{transform:rotate(360deg)}}
-        .processing-overlay .proc-text{font-size:16px;text-align:center;max-width:300px}
-        .processing-overlay .proc-sub{font-size:12px;color:#aaa;text-align:center}
-
-        /* WEEK INFO */
         .week-info{display:flex;gap:15px;justify-content:center;margin-bottom:15px;flex-wrap:wrap}
         .week-info label{font-weight:bold;color:#1a1a2e;font-size:13px}
         .week-info input,.week-info select{padding:7px 10px;border:1px solid #ccc;border-radius:5px;font-size:13px}
-
-        /* TOTALS */
         .week-total{background:#0f3460;color:#fff;padding:12px 20px;border-radius:5px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px}
         .week-total span:last-child{font-size:18px;font-weight:bold}
         .confidence-summary{display:flex;gap:8px;margin-bottom:12px}
@@ -55,8 +35,6 @@
         .conf-item.med{background:#fff3cd;color:#856404;border:2px solid #856404}
         .conf-item.low{background:#f8d7da;color:#721c24;border:2px solid #721c24}
         .conf-item span:last-child{font-size:15px}
-
-        /* SETTINGS */
         .settings-panel{display:none;background:#f8f9fa;border:1px solid #ddd;border-radius:8px;padding:18px;margin-bottom:15px}
         .settings-panel.active{display:block}
         .settings-panel h3{margin-bottom:12px;color:#1a1a2e;font-size:15px}
@@ -69,8 +47,6 @@
         .settings-group .add-option{display:flex;gap:4px}
         .settings-group .add-option input{flex:1;padding:5px;border:1px solid #ccc;border-radius:3px;font-size:12px}
         .settings-group .add-option button{background:#28a745;color:#fff;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;font-size:12px}
-
-        /* DAYS */
         .day-section{margin-bottom:15px;border:1px solid #ddd;border-radius:8px;overflow:hidden}
         .day-header{background:#16213e;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
         .day-header input[type="text"]{background:0 0;border:1px dashed rgba(255,255,255,.5);color:#fff;padding:4px 8px;font-size:13px;font-weight:bold;border-radius:3px;width:260px}
@@ -93,8 +69,6 @@
         .action-cell{display:flex;gap:3px;justify-content:center}
         .add-row-btn{background:#28a745;color:#fff;border:none;padding:6px 12px;border-radius:3px;cursor:pointer;font-size:12px;margin:8px}
         .add-day-btn{background:#0f3460;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-size:13px;display:block;margin:15px auto}
-
-        /* MODAL */
         .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center}
         .modal-overlay.active{display:flex}
         .modal{background:#fff;padding:22px;border-radius:10px;min-width:320px;max-width:90%}
@@ -105,15 +79,11 @@
         .modal-buttons button{padding:8px 18px;border:none;border-radius:5px;cursor:pointer;font-size:13px}
         .modal-cancel{background:#6c757d;color:#fff}
         .modal-confirm{background:#007bff;color:#fff}
-
-        /* TOAST */
         .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:9999;transition:transform .3s ease;white-space:nowrap}
         .toast.show{transform:translateX(-50%) translateY(0)}
         .toast.success{background:#28a745}
         .toast.error{background:#dc3545}
         .toast.info{background:#17a2b8}
-
-        /* PRINT */
         @media print{
             @page{size:letter;margin:.3in}
             body{background:#fff;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -146,434 +116,249 @@
 </head>
 <body>
 <div class="container">
-    <h1>COLLECTION SCHEDULE</h1>
-
-    <div class="status-bar no-print" id="statusBar">
-        <span class="status-left" id="statusText">💾 Auto-saved to this browser</span>
-        <span class="status-right" id="periodCount"></span>
-    </div>
-
-    <div class="period-bar no-print">
-        <label>📅 Period:</label>
-        <select id="periodSelect" onchange="switchPeriod()"></select>
-        <button class="pbtn pbtn-new" onclick="createNewPeriod()">+ New Period</button>
-        <button class="pbtn pbtn-del" onclick="deleteCurrentPeriod()">🗑️</button>
-    </div>
-
-    <div class="toolbar no-print">
-        <button class="tb-settings" onclick="toggleSettings()">⚙️ Settings</button>
-        <button class="tb-photo" onclick="uploadPhoto()">📷 Upload Photo</button>
-        <button class="tb-save" onclick="saveFile()">💾 Save Data</button>
-        <button class="tb-print" onclick="window.print()">🖨️ Print / Save PDF</button>
-    </div>
-
-    <div class="settings-panel no-print" id="settingsPanel">
-        <h3>⚙️ Manage Dropdown Options</h3>
-        <div class="settings-section">
-            <div class="settings-group">
-                <h4>Project Managers</h4>
-                <ul id="pmList"></ul>
-                <div class="add-option"><input type="text" id="newPmInput" placeholder="Enter name..."><button onclick="addPmOption()">Add</button></div>
-            </div>
-            <div class="settings-group">
-                <h4>Finance Sources</h4>
-                <ul id="financeList"></ul>
-                <div class="add-option"><input type="text" id="newFinanceInput" placeholder="Enter source..."><button onclick="addFinanceOption()">Add</button></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="week-info no-print">
-        <div><label>Period: </label><input type="date" id="periodStart" style="width:125px" onchange="onDataChange()"> <span>to</span> <input type="date" id="periodEnd" style="width:125px" onchange="onDataChange()"></div>
-        <div><label>Year: </label><input type="text" id="year" value="2026" style="width:70px" oninput="onDataChange()"></div>
-        <div><label>PM: </label><select id="projectManager" style="width:170px" onchange="onDataChange()"><option value="">-- Select --</option></select></div>
-    </div>
-    <p class="subtitle" id="subtitleDisplay"></p>
-
-    <div class="week-total"><span>WEEK TOTAL TO COLLECT</span><span id="grandTotal">$0.00</span></div>
-    <div class="confidence-summary">
-        <div class="conf-item high"><span>HIGH</span><span id="highTotal">$0.00</span></div>
-        <div class="conf-item med"><span>MED</span><span id="medTotal">$0.00</span></div>
-        <div class="conf-item low"><span>LOW</span><span id="lowTotal">$0.00</span></div>
-    </div>
-    <div class="week-total collected-total" style="background:#28a745"><span>TOTAL COLLECTED</span><span id="totalCollected">$0.00</span></div>
-
-    <div id="daysContainer"></div>
-    <button class="add-day-btn no-print" onclick="addDay()">+ Add Day</button>
+<h1>COLLECTION SCHEDULE</h1>
+<div class="status-bar no-print" id="statusBar"><span class="status-left" id="statusText">Auto-saved to this browser</span><span class="status-right" id="periodCount"></span></div>
+<div class="period-bar no-print"><label>Period:</label><select id="periodSelect" onchange="switchPeriod()"></select><button class="pbtn pbtn-new" onclick="createNewPeriod()">+ New Period</button><button class="pbtn pbtn-del" onclick="deleteCurrentPeriod()">Delete</button></div>
+<div class="toolbar no-print"><button class="tb-settings" onclick="toggleSettings()">Settings</button><button class="tb-save" onclick="saveFile()">Save Data</button><button class="tb-print" onclick="window.print()">Print / Save PDF</button></div>
+<div class="settings-panel no-print" id="settingsPanel"><h3>Manage Dropdown Options</h3><div class="settings-section"><div class="settings-group"><h4>Project Managers</h4><ul id="pmList"></ul><div class="add-option"><input type="text" id="newPmInput" placeholder="Enter name..."><button onclick="addPmOption()">Add</button></div></div><div class="settings-group"><h4>Finance Sources</h4><ul id="financeList"></ul><div class="add-option"><input type="text" id="newFinanceInput" placeholder="Enter source..."><button onclick="addFinanceOption()">Add</button></div></div></div></div>
+<div class="week-info no-print"><div><label>Period: </label><input type="date" id="periodStart" style="width:125px" onchange="onDataChange()"> <span>to</span> <input type="date" id="periodEnd" style="width:125px" onchange="onDataChange()"></div><div><label>Year: </label><input type="text" id="year" value="2026" style="width:70px" oninput="onDataChange()"></div><div><label>PM: </label><select id="projectManager" style="width:170px" onchange="onDataChange()"><option value="">-- Select --</option></select></div></div>
+<p class="subtitle" id="subtitleDisplay"></p>
+<div class="week-total"><span>WEEK TOTAL TO COLLECT</span><span id="grandTotal">$0.00</span></div>
+<div class="confidence-summary"><div class="conf-item high"><span>HIGH</span><span id="highTotal">$0.00</span></div><div class="conf-item med"><span>MED</span><span id="medTotal">$0.00</span></div><div class="conf-item low"><span>LOW</span><span id="lowTotal">$0.00</span></div></div>
+<div class="week-total collected-total" style="background:#28a745"><span>TOTAL COLLECTED</span><span id="totalCollected">$0.00</span></div>
+<div id="daysContainer"></div>
+<button class="add-day-btn no-print" onclick="addDay()">+ Add Day</button>
 </div>
-
-<div class="modal-overlay" id="moveModal">
-    <div class="modal">
-        <h3>📅 Move Customer</h3>
-        <p id="moveCustomerName"></p>
-        <select id="moveDaySelect"></select>
-        <div class="modal-buttons"><button class="modal-cancel" onclick="closeMoveModal()">Cancel</button><button class="modal-confirm" onclick="confirmMove()">Move</button></div>
-    </div>
-</div>
-
-<div class="processing-overlay" id="procOverlay">
-    <div class="proc-spinner"></div>
-    <div class="proc-text" id="procText">📷 Reading your photo with AI...</div>
-    <div class="proc-sub">This may take 10-20 seconds</div>
-</div>
-
+<div class="modal-overlay" id="moveModal"><div class="modal"><h3>Move Customer</h3><p id="moveCustomerName"></p><select id="moveDaySelect"></select><div class="modal-buttons"><button class="modal-cancel" onclick="closeMoveModal()">Cancel</button><button class="modal-confirm" onclick="confirmMove()">Move</button></div></div></div>
 <div class="toast" id="toast"></div>
+<script type="application/json" id="savedData">{"pmOptions":["Abraham Medina","Rudy Soto","Nick/Ed","Kyle W."],"financeOptions":["CASH","HOMERUN","SYNCHRONY","CHECK","LENDKEY","AQUA","FOUNDATION"],"periods":[{"id":"p_1770348564237_kccf","periodStart":"2026-02-02","periodEnd":"2026-02-06","year":"2026","projectManager":"","days":[{"dayName":"MONDAY, ","collections":[{"customer":"test","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false},{"customer":"","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false}]},{"dayName":"TUESDAY, ","collections":[{"customer":"test","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false}]},{"dayName":"WEDNESDAY, ","collections":[{"customer":"test","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false}]},{"dayName":"THURSDAY, ","collections":[{"customer":"","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false}]},{"dayName":"FRIDAY, ","collections":[{"customer":"","amount":0,"pm":"","finance":"","confidence":"","time":"","collected":false}]}]}],"activePeriodId":"p_1770348564237_kccf"}</script>
+<script id="mainScript">
+var STORE_KEY = 'altaCal_scheduleData';
+var appData = null;
+var dayCounter = 0, saveTimer = null;
+var currentMoveRow = null, currentMoveFromDay = null;
+var pmOptions = [], financeOptions = [];
 
-<script>
-const STORE_KEY = 'altaCal_scheduleData';
-let appData = null;
-let dayCounter = 0, saveTimer = null;
-let currentMoveRow = null, currentMoveFromDay = null;
-let pmOptions = [], financeOptions = [];
+function showToast(m,t,ms){t=t||'info';ms=ms||3000;var e=document.getElementById('toast');e.textContent=m;e.className='toast '+t+' show';setTimeout(function(){e.className='toast';},ms);}
 
-function showToast(m,t,ms){t=t||'info';ms=ms||3000;const e=document.getElementById('toast');e.textContent=m;e.className='toast '+t+' show';setTimeout(()=>e.className='toast',ms);}
-
-// === LOCAL STORAGE ===
 function saveToLocal(){
     try{
         localStorage.setItem(STORE_KEY,JSON.stringify(appData));
-        document.getElementById('statusText').textContent='💾 Saved — '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        document.getElementById('statusText').textContent='Saved \u2014 '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     }catch(e){}
 }
-function loadFromLocal(){try{const d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
-function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{saveCurrentPeriodToData();saveToLocal();},800);}
+function loadFromLocal(){try{var d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(function(){saveCurrentPeriodToData();saveToLocal();},800);}
 
-// === FILE SAVE / LOAD ===
+// === FILE SAVE (builds complete working HTML from parts) ===
 function saveFile(){
     saveCurrentPeriodToData();
-    // Fetch our own source code cleanly
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', location.href.split('?')[0].split('#')[0], false); // synchronous
-    try { xhr.send(); } catch(e) {}
-    var src = xhr.responseText || '';
-    if (!src || src.length < 500) {
-        // Fallback: use document source
-        src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    }
-    // Remove any previous embedded data
-    src = src.replace(/<script id="embedded-data"[^>]*>[\s\S]*?<\/script>\s*/g, '');
-    // Inject data right before closing </head>
-    var dataTag = '<scr' + 'ipt id="embedded-data" type="application/json">' + JSON.stringify(appData).replace(/<\//g, '<\\/' ) + '<\/scr' + 'ipt>\n';
-    src = src.replace('</head>', dataTag + '</head>');
-    var blob = new Blob([src], {type: 'text/html'});
+    var css = document.getElementById('mainStyle').textContent;
+    var js = document.getElementById('mainScript').text;
+    // Escape any closing script tags in the JS so they don't break HTML
+    js = js.replace(/<\/script/gi, '<\\/script');
+    var dataJSON = JSON.stringify(appData).replace(/<\//g, '<\\/');
+    var out = '';
+    out += '<!DOCTYPE html>\n<html lang="en">\n<head>\n';
+    out += '<meta charset="UTF-8">\n';
+    out += '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n';
+    out += '<title>Collection Schedule<\/title>\n';
+    out += '<style id="mainStyle">' + css + '<\/style>\n';
+    out += '<\/head>\n<body>\n';
+    out += BODY_TEMPLATE;
+    out += '\n<script type="application/json" id="savedData">' + dataJSON + '<\/script>';
+    out += '\n<script id="mainScript">' + js + '<\/script>';
+    out += '\n<\/body>\n<\/html>';
+    var blob = new Blob([out], {type:'text/html;charset=utf-8'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    var pm = document.getElementById('projectManager').value || 'Schedule';
-    var per = getPeriodString() || 'draft';
-    a.download = 'Collection_' + pm.replace(/[^a-zA-Z0-9]/g,'') + '_' + per.replace(/[\/\\]/g,'-') + '.html';
+    a.download = 'Collection_Schedule.html';
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
-    showToast('💾 Saved! Put this file in Google Drive — open it on any computer.', 'success', 5000);
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},500);
+    showToast('Saved! Copy this file to your other computer.','success',5000);
 }
 
-// === PERIODS ===
 function defaultPm(){return["Abraham Medina","Rudy Soto","Nick/Ed","Kyle W."];}
 function defaultFin(){return["CASH","HOMERUN","SYNCHRONY","CHECK","LENDKEY","AQUA","FOUNDATION"];}
-
 function newAppData(){return{pmOptions:defaultPm(),financeOptions:defaultFin(),periods:[],activePeriodId:null};}
 
 function createBlankPeriod(){
-    const now=new Date(),mon=getMonday(now),fri=new Date(mon);fri.setDate(fri.getDate()+4);
+    var now=new Date(),mon=getMonday(now),fri=new Date(mon);fri.setDate(fri.getDate()+4);
     return{id:'p_'+Date.now()+'_'+Math.random().toString(36).substr(2,4),periodStart:isoDate(mon),periodEnd:isoDate(fri),year:String(now.getFullYear()),projectManager:'',
     days:[{dayName:"MONDAY, ",collections:[]},{dayName:"TUESDAY, ",collections:[]},{dayName:"WEDNESDAY, ",collections:[]},{dayName:"THURSDAY, ",collections:[]},{dayName:"FRIDAY, ",collections:[]}]};
 }
-function getMonday(d){const dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()-day+(day===0?-6:1));return dt;}
+function getMonday(d){var dt=new Date(d),day=dt.getDay();dt.setDate(dt.getDate()-day+(day===0?-6:1));return dt;}
 function isoDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function fmtShort(s){if(!s)return'';const d=new Date(s+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}
+function fmtShort(s){if(!s)return'';var d=new Date(s+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}
 
 function periodLabel(p){
-    let l='';if(p.periodStart&&p.periodEnd)l=fmtShort(p.periodStart)+' – '+fmtShort(p.periodEnd);
+    var l='';if(p.periodStart&&p.periodEnd)l=fmtShort(p.periodStart)+' \u2013 '+fmtShort(p.periodEnd);
     else if(p.periodStart)l=fmtShort(p.periodStart);else l='No Date';
-    if(p.year)l+=', '+p.year;if(p.projectManager)l+=' — '+p.projectManager;return l;
+    if(p.year)l+=', '+p.year;if(p.projectManager)l+=' \u2014 '+p.projectManager;return l;
 }
 function renderPeriodSelect(){
-    const sel=document.getElementById('periodSelect');sel.innerHTML='';
-    [...appData.periods].sort((a,b)=>(b.periodStart||'').localeCompare(a.periodStart||'')).forEach(p=>{
-        const o=document.createElement('option');o.value=p.id;o.textContent=periodLabel(p);
-        if(p.id===appData.activePeriodId)o.selected=true;sel.appendChild(o);
-    });
+    var sel=document.getElementById('periodSelect');sel.innerHTML='';
+    var sorted=appData.periods.slice().sort(function(a,b){return(b.periodStart||'').localeCompare(a.periodStart||'');});
+    for(var i=0;i<sorted.length;i++){var p=sorted[i];var o=document.createElement('option');o.value=p.id;o.textContent=periodLabel(p);if(p.id===appData.activePeriodId)o.selected=true;sel.appendChild(o);}
     document.getElementById('periodCount').textContent=appData.periods.length+' period(s) stored';
 }
 function switchPeriod(){saveCurrentPeriodToData();appData.activePeriodId=document.getElementById('periodSelect').value;loadActivePeriodToUI();saveToLocal();}
-function createNewPeriod(){saveCurrentPeriodToData();const p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;renderPeriodSelect();loadActivePeriodToUI();saveToLocal();showToast('New period created','success');}
+function createNewPeriod(){saveCurrentPeriodToData();var p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;renderPeriodSelect();loadActivePeriodToUI();saveToLocal();showToast('New period created','success');}
 function deleteCurrentPeriod(){
     if(appData.periods.length<=1){showToast('Cannot delete the only period','error');return;}
     if(!confirm('Delete this period?'))return;
-    const i=appData.periods.findIndex(p=>p.id===appData.activePeriodId);appData.periods.splice(i,1);
+    for(var i=0;i<appData.periods.length;i++){if(appData.periods[i].id===appData.activePeriodId){appData.periods.splice(i,1);break;}}
     appData.activePeriodId=appData.periods[0].id;renderPeriodSelect();loadActivePeriodToUI();saveToLocal();showToast('Period deleted','info');
 }
-function getActivePeriod(){return appData.periods.find(p=>p.id===appData.activePeriodId)||appData.periods[0];}
-
+function getActivePeriod(){
+    for(var i=0;i<appData.periods.length;i++){if(appData.periods[i].id===appData.activePeriodId)return appData.periods[i];}
+    return appData.periods[0];
+}
 function saveCurrentPeriodToData(){
-    const p=getActivePeriod();if(!p)return;
+    var p=getActivePeriod();if(!p)return;
     p.periodStart=document.getElementById('periodStart').value;p.periodEnd=document.getElementById('periodEnd').value;
     p.year=document.getElementById('year').value;p.projectManager=document.getElementById('projectManager').value;p.days=[];
-    document.querySelectorAll('.day-section').forEach(sec=>{
-        const dn=sec.querySelector('.day-name-input').value,cols=[];
-        sec.querySelectorAll('tbody tr').forEach(row=>{
-            const i=row.querySelectorAll('input'),s=row.querySelectorAll('select');
-            cols.push({customer:i[0].value,amount:parseFloat(i[1].value)||0,pm:s[0].value,finance:s[1].value,confidence:s[2].value,time:i[2].value,collected:i[3].checked});
-        });
-        p.days.push({dayName:dn,collections:cols});
-    });
+    var secs=document.querySelectorAll('.day-section');
+    for(var s=0;s<secs.length;s++){var sec=secs[s];var dn=sec.querySelector('.day-name-input').value;var cols=[];
+        var rows=sec.querySelectorAll('tbody tr');
+        for(var r=0;r<rows.length;r++){var row=rows[r];var inp=row.querySelectorAll('input');var sl=row.querySelectorAll('select');
+            cols.push({customer:inp[0].value,amount:parseFloat(inp[1].value)||0,pm:sl[0].value,finance:sl[1].value,confidence:sl[2].value,time:inp[2].value,collected:inp[3].checked});}
+        p.days.push({dayName:dn,collections:cols});}
     appData.pmOptions=pmOptions;appData.financeOptions=financeOptions;
 }
 function loadActivePeriodToUI(){
-    const p=getActivePeriod();if(!p)return;
+    var p=getActivePeriod();if(!p)return;
     document.getElementById('daysContainer').innerHTML='';dayCounter=0;
     document.getElementById('periodStart').value=p.periodStart||'';document.getElementById('periodEnd').value=p.periodEnd||'';
     document.getElementById('year').value=p.year||'2026';updatePmDropdowns();document.getElementById('projectManager').value=p.projectManager||'';
     updateSubtitle();
-    if(p.days&&p.days.length>0)p.days.forEach(d=>addDay(d.dayName,d.collections));else addDay('MONDAY, ');
+    if(p.days&&p.days.length>0){for(var i=0;i<p.days.length;i++)addDay(p.days[i].dayName,p.days[i].collections);}else addDay('MONDAY, ');
     calculateTotals();
 }
-
 function onDataChange(){updateSubtitle();calculateTotals();saveCurrentPeriodToData();renderPeriodSelect();scheduleSave();}
 
-// === DROPDOWNS ===
-function renderPmList(){const l=document.getElementById('pmList');l.innerHTML='';pmOptions.forEach((p,i)=>{const li=document.createElement('li');li.innerHTML='<span>'+p+'</span><button onclick="removePmOption('+i+')">✕</button>';l.appendChild(li);});}
-function addPmOption(){const inp=document.getElementById('newPmInput'),v=inp.value.trim();if(v&&!pmOptions.includes(v)){pmOptions.push(v);renderPmList();updatePmDropdowns();inp.value='';onDataChange();}}
+function renderPmList(){var l=document.getElementById('pmList');l.innerHTML='';for(var i=0;i<pmOptions.length;i++){var li=document.createElement('li');li.innerHTML='<span>'+pmOptions[i]+'</span><button onclick="removePmOption('+i+')">X</button>';l.appendChild(li);}}
+function addPmOption(){var inp=document.getElementById('newPmInput'),v=inp.value.trim();if(v&&pmOptions.indexOf(v)===-1){pmOptions.push(v);renderPmList();updatePmDropdowns();inp.value='';onDataChange();}}
 function removePmOption(i){pmOptions.splice(i,1);renderPmList();updatePmDropdowns();onDataChange();}
 function updatePmDropdowns(){
-    const h=document.getElementById('projectManager'),hv=h.value;h.innerHTML='<option value="">-- Select --</option>';
-    pmOptions.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;h.appendChild(o);});h.value=hv;
-    document.querySelectorAll('.pm-select').forEach(s=>{const v=s.value;s.innerHTML='<option value="">--</option>';pmOptions.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;s.appendChild(o);});s.value=v;});
+    var h=document.getElementById('projectManager'),hv=h.value;h.innerHTML='<option value="">-- Select --</option>';
+    for(var i=0;i<pmOptions.length;i++){var o=document.createElement('option');o.value=pmOptions[i];o.textContent=pmOptions[i];h.appendChild(o);}h.value=hv;
+    var all=document.querySelectorAll('.pm-select');for(var j=0;j<all.length;j++){var s=all[j];var v=s.value;s.innerHTML='<option value="">--</option>';for(var k=0;k<pmOptions.length;k++){var o2=document.createElement('option');o2.value=pmOptions[k];o2.textContent=pmOptions[k];s.appendChild(o2);}s.value=v;}
 }
-function renderFinanceList(){const l=document.getElementById('financeList');l.innerHTML='';financeOptions.forEach((f,i)=>{const li=document.createElement('li');li.innerHTML='<span>'+f+'</span><button onclick="removeFinanceOption('+i+')">✕</button>';l.appendChild(li);});}
-function addFinanceOption(){const inp=document.getElementById('newFinanceInput'),v=inp.value.trim().toUpperCase();if(v&&!financeOptions.includes(v)){financeOptions.push(v);renderFinanceList();updateFinanceDropdowns();inp.value='';onDataChange();}}
+function renderFinanceList(){var l=document.getElementById('financeList');l.innerHTML='';for(var i=0;i<financeOptions.length;i++){var li=document.createElement('li');li.innerHTML='<span>'+financeOptions[i]+'</span><button onclick="removeFinanceOption('+i+')">X</button>';l.appendChild(li);}}
+function addFinanceOption(){var inp=document.getElementById('newFinanceInput'),v=inp.value.trim().toUpperCase();if(v&&financeOptions.indexOf(v)===-1){financeOptions.push(v);renderFinanceList();updateFinanceDropdowns();inp.value='';onDataChange();}}
 function removeFinanceOption(i){financeOptions.splice(i,1);renderFinanceList();updateFinanceDropdowns();onDataChange();}
-function updateFinanceDropdowns(){document.querySelectorAll('.finance-select').forEach(s=>{const v=s.value;s.innerHTML='<option value="">--</option>';financeOptions.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;s.appendChild(o);});s.value=v;});}
+function updateFinanceDropdowns(){var all=document.querySelectorAll('.finance-select');for(var j=0;j<all.length;j++){var s=all[j];var v=s.value;s.innerHTML='<option value="">--</option>';for(var k=0;k<financeOptions.length;k++){var o=document.createElement('option');o.value=financeOptions[k];o.textContent=financeOptions[k];s.appendChild(o);}s.value=v;}}
 
 function updateSubtitle(){
-    const s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value,y=document.getElementById('year').value,pm=document.getElementById('projectManager').value;
-    let parts=[];if(s&&e)parts.push('Period '+fmtShort(s)+' - '+fmtShort(e));else if(s)parts.push('Period '+fmtShort(s));
-    if(y)parts.push(y);let txt=parts.join(', ');if(pm)txt+=(txt?' - ':'')+pm;document.getElementById('subtitleDisplay').textContent=txt;
+    var s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value,y=document.getElementById('year').value,pm=document.getElementById('projectManager').value;
+    var parts=[];if(s&&e)parts.push('Period '+fmtShort(s)+' - '+fmtShort(e));else if(s)parts.push('Period '+fmtShort(s));
+    if(y)parts.push(y);var txt=parts.join(', ');if(pm)txt+=(txt?' - ':'')+pm;document.getElementById('subtitleDisplay').textContent=txt;
 }
-function getPeriodString(){const s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value;if(s&&e)return fmtShort(s)+'-'+fmtShort(e);if(s)return fmtShort(s);return'';}
+function getPeriodString(){var s=document.getElementById('periodStart').value,e=document.getElementById('periodEnd').value;if(s&&e)return fmtShort(s)+'-'+fmtShort(e);if(s)return fmtShort(s);return'';}
 function toggleSettings(){document.getElementById('settingsPanel').classList.toggle('active');}
 
-// === DAYS & ROWS ===
 function addDay(dayName,collections){
-    dayCounter++;const id=dayCounter,c=document.getElementById('daysContainer'),sec=document.createElement('div');
+    dayCounter++;var id=dayCounter,c=document.getElementById('daysContainer'),sec=document.createElement('div');
     sec.className='day-section';sec.id='day-'+id;sec.dataset.dayId=id;
-    sec.innerHTML='<div class="day-header"><input type="text" class="day-name-input" value="'+(dayName||'DAY, MONTH DATE, YEAR')+'" placeholder="e.g., MONDAY, JANUARY 19, 2026" onchange="onDataChange()"><div style="display:flex;align-items:center;gap:12px"><span class="day-total">Day Total: $0.00</span><button class="delete-btn no-print" onclick="deleteDay('+id+')">Delete Day</button></div></div><table class="collection-table"><thead><tr><th style="width:16%">CUSTOMER</th><th style="width:9%">AMOUNT</th><th style="width:12%">PROJECT MGR</th><th style="width:10%">FINANCE</th><th style="width:8%">CONFIDENCE</th><th style="width:7%">TIME</th><th style="width:5%">✓</th><th style="width:11%" class="no-print">ACTIONS</th></tr></thead><tbody id="tbody-'+id+'"></tbody></table><button class="add-row-btn no-print" onclick="addRow('+id+')">+ Add Customer</button>';
+    sec.innerHTML='<div class="day-header"><input type="text" class="day-name-input" value="'+(dayName||'DAY, MONTH DATE, YEAR')+'" placeholder="e.g., MONDAY, JANUARY 19, 2026" onchange="onDataChange()"><div style="display:flex;align-items:center;gap:12px"><span class="day-total">Day Total: $0.00</span><button class="delete-btn no-print" onclick="deleteDay('+id+')">Delete Day</button></div></div><table class="collection-table"><thead><tr><th style="width:16%">CUSTOMER</th><th style="width:9%">AMOUNT</th><th style="width:12%">PROJECT MGR</th><th style="width:10%">FINANCE</th><th style="width:8%">CONFIDENCE</th><th style="width:7%">TIME</th><th style="width:5%">&#10003;</th><th style="width:11%" class="no-print">ACTIONS</th></tr></thead><tbody id="tbody-'+id+'"></tbody></table><button class="add-row-btn no-print" onclick="addRow('+id+')">+ Add Customer</button>';
     c.appendChild(sec);
-    if(collections&&collections.length>0)collections.forEach(d=>addRow(id,d));else addRow(id);
+    if(collections&&collections.length>0){for(var i=0;i<collections.length;i++)addRow(id,collections[i]);}else addRow(id);
     calculateTotals();
 }
 function addRow(dayId,data){
-    data=data||{};const tb=document.getElementById('tbody-'+dayId),row=document.createElement('tr');row.dataset.dayId=dayId;
-    let pmH='<option value="">--</option>';pmOptions.forEach(p=>{pmH+='<option value="'+p+'" '+(data.pm===p?'selected':'')+'>'+p+'</option>';});
-    let fH='<option value="">--</option>';financeOptions.forEach(f=>{fH+='<option value="'+f+'" '+(data.finance===f?'selected':'')+'>'+f+'</option>';});
-    let cH='<option value="">--</option>';['HIGH','MED','LOW'].forEach(l=>{cH+='<option value="'+l+'" '+(data.confidence===l?'selected':'')+'>'+l+'</option>';});
-    row.innerHTML='<td><input type="text" value="'+(data.customer||'')+'" placeholder="Customer Name" onchange="onDataChange()"></td><td><input type="number" value="'+(data.amount||'')+'" placeholder="0" onchange="onDataChange()"></td><td><select class="pm-select" onchange="onDataChange()">'+pmH+'</select></td><td><select class="finance-select" onchange="onDataChange()">'+fH+'</select></td><td><select class="confidence-select" onchange="updateConfidenceColor(this);onDataChange()">'+cH+'</select></td><td><input type="text" class="time-input" value="'+(data.time||'')+'" placeholder="" onchange="onDataChange()"></td><td class="checkbox-cell"><input type="checkbox" '+(data.collected?'checked':'')+' onchange="updateCheckmark(this);onDataChange()"><span class="print-check">'+(data.collected?'✓':'')+'</span></td><td class="no-print"><div class="action-cell"><button class="move-btn" onclick="openMoveModal(this)">📅</button><button class="delete-btn" onclick="deleteRow(this)">✕</button></div></td>';
-    const cs=row.querySelector('.confidence-select');if(cs&&data.confidence)updateConfidenceColor(cs);
+    data=data||{};var tb=document.getElementById('tbody-'+dayId),row=document.createElement('tr');row.dataset.dayId=String(dayId);
+    var pmH='<option value="">--</option>';for(var i=0;i<pmOptions.length;i++){pmH+='<option value="'+pmOptions[i]+'" '+(data.pm===pmOptions[i]?'selected':'')+'>'+pmOptions[i]+'</option>';}
+    var fH='<option value="">--</option>';for(var j=0;j<financeOptions.length;j++){fH+='<option value="'+financeOptions[j]+'" '+(data.finance===financeOptions[j]?'selected':'')+'>'+financeOptions[j]+'</option>';}
+    var cH='<option value="">--</option>';var cls=['HIGH','MED','LOW'];for(var k=0;k<cls.length;k++){cH+='<option value="'+cls[k]+'" '+(data.confidence===cls[k]?'selected':'')+'>'+cls[k]+'</option>';}
+    row.innerHTML='<td><input type="text" value="'+(data.customer||'').replace(/"/g,'&quot;')+'" placeholder="Customer Name" onchange="onDataChange()"></td><td><input type="number" value="'+(data.amount||'')+'" placeholder="0" onchange="onDataChange()"></td><td><select class="pm-select" onchange="onDataChange()">'+pmH+'</select></td><td><select class="finance-select" onchange="onDataChange()">'+fH+'</select></td><td><select class="confidence-select" onchange="updateConfidenceColor(this);onDataChange()">'+cH+'</select></td><td><input type="text" class="time-input" value="'+(data.time||'')+'" placeholder="" onchange="onDataChange()"></td><td class="checkbox-cell"><input type="checkbox" '+(data.collected?'checked':'')+' onchange="updateCheckmark(this);onDataChange()"><span class="print-check">'+(data.collected?'\u2713':'')+'</span></td><td class="no-print"><div class="action-cell"><button class="move-btn" onclick="openMoveModal(this)">\u21C4</button><button class="delete-btn" onclick="deleteRow(this)">X</button></div></td>';
+    var cs=row.querySelector('.confidence-select');if(cs&&data.confidence)updateConfidenceColor(cs);
     tb.appendChild(row);calculateTotals();
 }
 function deleteRow(btn){btn.closest('tr').remove();onDataChange();}
 function deleteDay(id){if(confirm('Delete this day?')){document.getElementById('day-'+id).remove();onDataChange();}}
 
-// === MOVE MODAL ===
 function openMoveModal(btn){
-    const row=btn.closest('tr');currentMoveRow=row;currentMoveFromDay=row.dataset.dayId;
+    var row=btn.closest('tr');currentMoveRow=row;currentMoveFromDay=row.dataset.dayId;
     document.getElementById('moveCustomerName').textContent='Move "'+(row.querySelector('input[type="text"]').value||'Customer')+'" to:';
-    const sel=document.getElementById('moveDaySelect');sel.innerHTML='';
-    document.querySelectorAll('.day-section').forEach(s=>{const did=s.dataset.dayId,o=document.createElement('option');o.value=did;o.textContent=s.querySelector('.day-name-input').value;if(did===currentMoveFromDay){o.textContent+=' (current)';o.disabled=true;}sel.appendChild(o);});
-    const no=document.createElement('option');no.value='new';no.textContent='➕ Create New Day...';sel.appendChild(no);
+    var sel=document.getElementById('moveDaySelect');sel.innerHTML='';
+    var secs=document.querySelectorAll('.day-section');for(var i=0;i<secs.length;i++){var s=secs[i];var did=s.dataset.dayId;var o=document.createElement('option');o.value=did;o.textContent=s.querySelector('.day-name-input').value;if(did===currentMoveFromDay){o.textContent+=' (current)';o.disabled=true;}sel.appendChild(o);}
+    var no=document.createElement('option');no.value='new';no.textContent='Create New Day...';sel.appendChild(no);
     document.getElementById('moveModal').classList.add('active');
 }
 function closeMoveModal(){document.getElementById('moveModal').classList.remove('active');currentMoveRow=null;currentMoveFromDay=null;}
 function confirmMove(){
-    const tgt=document.getElementById('moveDaySelect').value;if(!currentMoveRow){closeMoveModal();return;}
-    const i=currentMoveRow.querySelectorAll('input'),s=currentMoveRow.querySelectorAll('select');
-    const rd={customer:i[0].value,amount:parseFloat(i[1].value)||0,pm:s[0].value,finance:s[1].value,confidence:s[2].value,time:i[2].value,collected:i[3].checked};
+    var tgt=document.getElementById('moveDaySelect').value;if(!currentMoveRow){closeMoveModal();return;}
+    var inp=currentMoveRow.querySelectorAll('input'),sl=currentMoveRow.querySelectorAll('select');
+    var rd={customer:inp[0].value,amount:parseFloat(inp[1].value)||0,pm:sl[0].value,finance:sl[1].value,confidence:sl[2].value,time:inp[2].value,collected:inp[3].checked};
     currentMoveRow.remove();
-    if(tgt==='new'){const n=prompt('Enter the new day name:');if(n)addDay(n,[rd]);else addRow(currentMoveFromDay,rd);}else addRow(tgt,rd);
+    if(tgt==='new'){var n=prompt('Enter the new day name:');if(n)addDay(n,[rd]);else addRow(currentMoveFromDay,rd);}else addRow(parseInt(tgt),rd);
     onDataChange();closeMoveModal();
 }
 
-// === TOTALS ===
 function calculateTotals(){
-    let grand=0,collected=0,high=0,med=0,low=0;
-    document.querySelectorAll('.day-section').forEach(sec=>{
-        let dt=0;sec.querySelectorAll('tbody tr').forEach(row=>{
-            const a=parseFloat(row.querySelector('input[type="number"]')?.value)||0;
-            const chk=row.querySelector('input[type="checkbox"]')?.checked;
-            const cf=row.querySelector('.confidence-select')?.value;
+    var grand=0,collected=0,high=0,med=0,low=0;
+    var secs=document.querySelectorAll('.day-section');
+    for(var s=0;s<secs.length;s++){var sec=secs[s];var dt=0;
+        var rows=sec.querySelectorAll('tbody tr');
+        for(var r=0;r<rows.length;r++){var row=rows[r];
+            var numInp=row.querySelector('input[type="number"]');
+            var chkInp=row.querySelector('input[type="checkbox"]');
+            var confSel=row.querySelector('.confidence-select');
+            var a=numInp?parseFloat(numInp.value)||0:0;
+            var chk=chkInp?chkInp.checked:false;
+            var cf=confSel?confSel.value:'';
             dt+=a;if(chk)collected+=a;if(cf==='HIGH')high+=a;else if(cf==='MED')med+=a;else if(cf==='LOW')low+=a;
-        });sec.querySelector('.day-total').textContent='Day Total: $'+dt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});grand+=dt;
-    });
-    const f=v=>'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    document.getElementById('grandTotal').textContent=f(grand);document.getElementById('totalCollected').textContent=f(collected);
-    document.getElementById('highTotal').textContent=f(high);document.getElementById('medTotal').textContent=f(med);document.getElementById('lowTotal').textContent=f(low);
+        }
+        sec.querySelector('.day-total').textContent='Day Total: $'+dt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});grand+=dt;
+    }
+    var fmt=function(v){return'$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+    document.getElementById('grandTotal').textContent=fmt(grand);document.getElementById('totalCollected').textContent=fmt(collected);
+    document.getElementById('highTotal').textContent=fmt(high);document.getElementById('medTotal').textContent=fmt(med);document.getElementById('lowTotal').textContent=fmt(low);
 }
-function updateCheckmark(cb){cb.parentElement.querySelector('.print-check').textContent=cb.checked?'✓':'';}
+function updateCheckmark(cb){cb.parentElement.querySelector('.print-check').textContent=cb.checked?'\u2713':'';}
 function updateConfidenceColor(sel){
-    const v=sel.value;sel.style.fontWeight='bold';
+    var v=sel.value;sel.style.fontWeight='bold';
     if(v==='HIGH'){sel.style.backgroundColor='#d4edda';sel.style.color='#155724';}
     else if(v==='MED'){sel.style.backgroundColor='#fff3cd';sel.style.color='#856404';}
     else if(v==='LOW'){sel.style.backgroundColor='#f8d7da';sel.style.color='#721c24';}
     else{sel.style.backgroundColor='';sel.style.color='';sel.style.fontWeight='normal';}
 }
 
-// === PHOTO UPLOAD + AI ===
-function uploadPhoto(){
-    var inp = document.createElement('input');
-    inp.type = 'file';
-    inp.accept = 'image/*';
-    inp.capture = 'environment'; // prefer camera on mobile
-    inp.style.display = 'none';
-    document.body.appendChild(inp);
-    inp.onchange = function(e){
-        var f = e.target.files[0];
-        if(!f){ document.body.removeChild(inp); return; }
-        document.body.removeChild(inp);
-        // Show processing overlay
-        document.getElementById('procOverlay').classList.add('active');
-        document.getElementById('procText').textContent = '📷 Reading your photo with AI...';
-        // Read as base64
-        var reader = new FileReader();
-        reader.onload = function(ev){
-            var base64 = ev.target.result.split(',')[1];
-            var mediaType = f.type || 'image/jpeg';
-            sendToAI(base64, mediaType);
-        };
-        reader.onerror = function(){
-            document.getElementById('procOverlay').classList.remove('active');
-            showToast('❌ Could not read photo','error');
-        };
-        reader.readAsDataURL(f);
-    };
-    inp.click();
-}
+// Body template for save - static HTML that init() populates
+var BODY_TEMPLATE = [
+'<div class="container">',
+'<h1>COLLECTION SCHEDULE</h1>',
+'<div class="status-bar no-print" id="statusBar"><span class="status-left" id="statusText">Auto-saved to this browser</span><span class="status-right" id="periodCount"></span></div>',
+'<div class="period-bar no-print"><label>Period:</label><select id="periodSelect" onchange="switchPeriod()"></select><button class="pbtn pbtn-new" onclick="createNewPeriod()">+ New Period</button><button class="pbtn pbtn-del" onclick="deleteCurrentPeriod()">Delete</button></div>',
+'<div class="toolbar no-print"><button class="tb-settings" onclick="toggleSettings()">Settings</button><button class="tb-save" onclick="saveFile()">Save Data</button><button class="tb-print" onclick="window.print()">Print / Save PDF</button></div>',
+'<div class="settings-panel no-print" id="settingsPanel"><h3>Manage Dropdown Options</h3><div class="settings-section"><div class="settings-group"><h4>Project Managers</h4><ul id="pmList"></ul><div class="add-option"><input type="text" id="newPmInput" placeholder="Enter name..."><button onclick="addPmOption()">Add</button></div></div><div class="settings-group"><h4>Finance Sources</h4><ul id="financeList"></ul><div class="add-option"><input type="text" id="newFinanceInput" placeholder="Enter source..."><button onclick="addFinanceOption()">Add</button></div></div></div></div>',
+'<div class="week-info no-print"><div><label>Period: </label><input type="date" id="periodStart" style="width:125px" onchange="onDataChange()"> <span>to</span> <input type="date" id="periodEnd" style="width:125px" onchange="onDataChange()"></div><div><label>Year: </label><input type="text" id="year" value="2026" style="width:70px" oninput="onDataChange()"></div><div><label>PM: </label><select id="projectManager" style="width:170px" onchange="onDataChange()"><option value="">-- Select --</option></select></div></div>',
+'<p class="subtitle" id="subtitleDisplay"></p>',
+'<div class="week-total"><span>WEEK TOTAL TO COLLECT</span><span id="grandTotal">$0.00</span></div>',
+'<div class="confidence-summary"><div class="conf-item high"><span>HIGH</span><span id="highTotal">$0.00</span></div><div class="conf-item med"><span>MED</span><span id="medTotal">$0.00</span></div><div class="conf-item low"><span>LOW</span><span id="lowTotal">$0.00</span></div></div>',
+'<div class="week-total collected-total" style="background:#28a745"><span>TOTAL COLLECTED</span><span id="totalCollected">$0.00</span></div>',
+'<div id="daysContainer"></div>',
+'<button class="add-day-btn no-print" onclick="addDay()">+ Add Day</button>',
+'</div>',
+'<div class="modal-overlay" id="moveModal"><div class="modal"><h3>Move Customer</h3><p id="moveCustomerName"></p><select id="moveDaySelect"></select><div class="modal-buttons"><button class="modal-cancel" onclick="closeMoveModal()">Cancel</button><button class="modal-confirm" onclick="confirmMove()">Move</button></div></div></div>',
+'<div class="toast" id="toast"></div>'
+].join('\n');
 
-function sendToAI(base64, mediaType){
-    var pmList = pmOptions.join(', ');
-    var finList = financeOptions.join(', ');
-    var prompt = 'You are reading a collection schedule photo. Extract ALL collection entries you can see.\n\n' +
-        'Available Project Managers: ' + pmList + '\n' +
-        'Available Finance types: ' + finList + '\n\n' +
-        'Return ONLY valid JSON in this exact format, no other text:\n' +
-        '{\n' +
-        '  "periodStart": "YYYY-MM-DD or empty",\n' +
-        '  "periodEnd": "YYYY-MM-DD or empty",\n' +
-        '  "year": "2026",\n' +
-        '  "projectManager": "name from PM list or empty",\n' +
-        '  "days": [\n' +
-        '    {\n' +
-        '      "dayName": "MONDAY, FEBRUARY 2, 2026",\n' +
-        '      "collections": [\n' +
-        '        {\n' +
-        '          "customer": "Customer Name",\n' +
-        '          "amount": 5000,\n' +
-        '          "pm": "name from PM list or empty",\n' +
-        '          "finance": "type from finance list or empty",\n' +
-        '          "confidence": "HIGH or MED or LOW or empty",\n' +
-        '          "time": "10:00 AM or empty",\n' +
-        '          "collected": false\n' +
-        '        }\n' +
-        '      ]\n' +
-        '    }\n' +
-        '  ]\n' +
-        '}\n\n' +
-        'Rules:\n' +
-        '- Match PM names and finance types to the closest option from the lists above\n' +
-        '- If confidence is not specified, leave it empty\n' +
-        '- amounts should be numbers only (no $ sign)\n' +
-        '- If you see a checkmark or "collected" indicator, set collected to true\n' +
-        '- Group entries by day. If no day grouping is visible, put all in one day\n' +
-        '- Extract every entry you can read, even if partially visible';
-
-    fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 4000,
-            messages: [{
-                role: 'user',
-                content: [
-                    {type: 'image', source: {type: 'base64', media_type: mediaType, data: base64}},
-                    {type: 'text', text: prompt}
-                ]
-            }]
-        })
-    })
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-        document.getElementById('procOverlay').classList.remove('active');
-        if(!data.content || !data.content.length){
-            showToast('❌ AI returned no data. Try a clearer photo.','error',5000);
-            return;
-        }
-        var text = data.content.map(function(c){ return c.text || ''; }).join('');
-        // Extract JSON from response (handle markdown code blocks)
-        var jsonStr = text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
-        try {
-            var parsed = JSON.parse(jsonStr);
-            applyPhotoData(parsed);
-        } catch(e) {
-            console.error('Parse error:', e, 'Raw:', text);
-            showToast('❌ Could not parse AI response. Try a clearer photo.','error',5000);
-        }
-    })
-    .catch(function(err){
-        document.getElementById('procOverlay').classList.remove('active');
-        console.error('API error:', err);
-        showToast('❌ AI connection failed. Check your internet.','error',5000);
-    });
-}
-
-function applyPhotoData(data){
-    if(!data.days || !data.days.length){
-        showToast('❌ No schedule data found in photo.','error');
-        return;
-    }
-    // Ask user: replace current period or create new?
-    var action = confirm('Found ' + data.days.length + ' day(s) with collections!\n\nOK = Replace current period\nCancel = Create new period');
-
-    if(!action){
-        // Create new period
-        saveCurrentPeriodToData();
-        var p = createBlankPeriod();
-        appData.periods.push(p);
-        appData.activePeriodId = p.id;
-    }
-
-    // Apply data to active period
-    var period = getActivePeriod();
-    if(data.periodStart) period.periodStart = data.periodStart;
-    if(data.periodEnd) period.periodEnd = data.periodEnd;
-    if(data.year) period.year = data.year;
-    if(data.projectManager) period.projectManager = data.projectManager;
-    period.days = data.days;
-
-    renderPeriodSelect();
-    loadActivePeriodToUI();
-    saveToLocal();
-
-    var totalEntries = 0;
-    data.days.forEach(function(d){ totalEntries += (d.collections ? d.collections.length : 0); });
-    showToast('✅ Loaded ' + totalEntries + ' entries from photo!', 'success', 5000);
-}
-
-// === INIT ===
 function init(){
-    // Check for embedded data first (from a saved HTML file)
-    const embeddedEl = document.getElementById('embedded-data');
-    let saved = null;
+    var embeddedEl = document.getElementById('savedData');
+    var saved = null;
     if (embeddedEl && embeddedEl.textContent.trim()) {
         try { saved = JSON.parse(embeddedEl.textContent); } catch(e) { saved = null; }
     }
-    // Fall back to localStorage
     if (!saved || !saved.periods || !saved.periods.length) {
         saved = loadFromLocal();
     }
     if(saved&&saved.periods&&saved.periods.length>0){appData=saved;}
-    else{appData=newAppData();const p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;}
+    else{appData=newAppData();var p=createBlankPeriod();appData.periods.push(p);appData.activePeriodId=p.id;}
     pmOptions=appData.pmOptions||defaultPm();financeOptions=appData.financeOptions||defaultFin();
     renderPmList();renderFinanceList();updatePmDropdowns();updateFinanceDropdowns();
     if(!appData.activePeriodId&&appData.periods.length)appData.activePeriodId=appData.periods[0].id;
